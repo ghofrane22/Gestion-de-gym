@@ -1,0 +1,825 @@
+
+  <!DOCTYPE html>
+  <html lang="fr" class="scroll-smooth">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Gestion de Gym</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        tbody::-webkit-scrollbar {
+          height: 8px;
+        }
+        tbody::-webkit-scrollbar-thumb {
+          background: #3b82f6;
+          border-radius: 4px;
+        }
+        .thumb-image {
+          width: 48px;
+          height: 48px;
+          object-fit: cover;
+          border-radius: 9999px;
+          border: 2px solid #6366f1; /* Indigo 500 */
+        }
+      </style>
+    </head>
+    <body
+      class="bg-gradient-to-r from-indigo-50 via-white to-indigo-50 min-h-screen flex flex-col font-sans"
+    >
+      <header class="bg-indigo-700 shadow p-6">
+        <h1
+          class="text-3xl font-extrabold text-white text-center tracking-wide"
+        >
+          Gestion de Gym
+        </h1>
+      </header>
+
+      <nav class="bg-white shadow-sm mt-6 max-w-7xl mx-auto rounded-lg">
+        <ul
+          class="flex justify-center space-x-6 text-lg font-semibold text-gray-600"
+        >
+          <li>
+            <button
+              id="tab-members"
+              class="relative py-3 px-6 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 border-b-4 border-indigo-600 text-indigo-600 rounded-t-md"
+            >
+              Gestion des abonnés
+            </button>
+          </li>
+          <li>
+            <button
+              id="tab-coaches"
+              class="relative py-3 px-6 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 border-b-4 border-transparent hover:border-indigo-400 hover:text-indigo-700 rounded-t-md"
+            >
+              Gestion des coachs
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <main class="flex-grow max-w-7xl mx-auto p-8 w-full">
+        <!-- Members Section -->
+        <section id="members-section" class="mt-10">
+          <h2
+            class="text-2xl font-bold mb-6 text-gray-800 border-b border-indigo-400 pb-2"
+          >
+            Gestion des abonnés
+          </h2>
+
+          <!-- Member Form -->
+          <form
+            id="member-form"
+            class="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto"
+          >
+            <input type="hidden" id="member-id" />
+
+            <div>
+              <label
+                for="member-nom"
+                class="block text-gray-700 mb-2 font-medium"
+                >Nom</label
+              >
+              <input
+                type="text"
+                id="member-nom"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Ex: Dupont"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="member-prenom"
+                class="block text-gray-700 mb-2 font-medium"
+                >Prénom</label
+              >
+              <input
+                type="text"
+                id="member-prenom"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Ex: Marie"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="member-date-inscription"
+                class="block text-gray-700 mb-2 font-medium"
+                >Date d’inscription</label
+              >
+              <input
+                type="date"
+                id="member-date-inscription"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="member-formule"
+                class="block text-gray-700 mb-2 font-medium"
+                >Formule choisie</label
+              >
+              <select
+                id="member-formule"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              >
+                <option value="" disabled selected>Sélectionner</option>
+                <option value="Basique">Basique</option>
+                <option value="Standard">Standard</option>
+                <option value="Premium">Premium</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="member-statut"
+                class="block text-gray-700 mb-2 font-medium"
+                >Statut</label
+              >
+              <select
+                id="member-statut"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              >
+                <option value="" disabled selected>Sélectionner</option>
+                <option value="actif">Actif</option>
+                <option value="inactif">Inactif</option>
+              </select>
+            </div>
+
+            <div class="col-span-1">
+              <label
+                for="member-photo"
+                class="block text-gray-700 mb-2 font-medium"
+                >Photo (facultatif)</label
+              >
+              <input
+                type="file"
+                id="member-photo"
+                accept="image/*"
+                class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer"
+              />
+              <img
+                id="member-photo-preview"
+                alt="Aperçu photo abonné"
+                class="mt-3 rounded-full w-24 h-24 object-cover border-4 border-indigo-400 hidden"
+              />
+            </div>
+
+            <div class="flex items-end space-x-4 md:col-span-4 justify-center">
+              <button
+                type="submit"
+                class="bg-indigo-600 text-white px-8 py-3 rounded-xl shadow hover:bg-indigo-700 transition focus:outline-none focus:ring-4 focus:ring-indigo-400"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                id="member-cancel-btn"
+                class="bg-gray-300 text-gray-800 px-8 py-3 rounded-xl shadow hover:bg-gray-400 transition focus:outline-none focus:ring-4 focus:ring-gray-400 hidden"
+              >
+                Annuler
+              </button>
+            </div>
+          </form>
+
+          <!-- Member Table -->
+          <div
+            class="overflow-x-auto bg-white rounded-xl shadow max-w-7xl mx-auto mt-10"
+          >
+            <table class="w-full border-collapse text-gray-700">
+              <thead class="bg-indigo-100 text-indigo-900 font-semibold">
+                <tr>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Photo
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Nom
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Prénom
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Date d’inscription
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Formule choisie
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Statut
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-center">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="member-table-body"
+                class="divide-y divide-indigo-200 bg-indigo-50"
+              >
+                <!-- Members inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Coaches Section -->
+        <section id="coaches-section" class="mt-10 hidden">
+          <h2
+            class="text-2xl font-bold mb-6 text-gray-800 border-b border-indigo-400 pb-2"
+          >
+            Gestion des coachs
+          </h2>
+
+          <!-- Coach Form -->
+          <form
+            id="coach-form"
+            class="bg-white p-6 rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto"
+          >
+            <input type="hidden" id="coach-id" />
+
+            <div>
+              <label
+                for="coach-nom"
+                class="block text-gray-700 mb-2 font-medium"
+                >Nom</label
+              >
+              <input
+                type="text"
+                id="coach-nom"
+                placeholder="Ex: Martin"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="coach-specialite"
+                class="block text-gray-700 mb-2 font-medium"
+                >Spécialité</label
+              >
+              <input
+                type="text"
+                id="coach-specialite"
+                placeholder="Ex: Yoga, Musculation"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="coach-planning"
+                class="block text-gray-700 mb-2 font-medium"
+                >Planning</label
+              >
+              <input
+                type="text"
+                id="coach-planning"
+                placeholder="Ex: Lun-Mar-Mer 9h-12h"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="coach-annees-experience"
+                class="block text-gray-700 mb-2 font-medium"
+                >Années d’expérience</label
+              >
+              <input
+                type="number"
+                id="coach-annees-experience"
+                min="0"
+                class="w-full border border-gray-300 rounded-lg px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                for="coach-photo"
+                class="block text-gray-700 mb-2 font-medium"
+                >Photo (facultatif)</label
+              >
+              <input
+                type="file"
+                id="coach-photo"
+                accept="image/*"
+                class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer"
+              />
+              <img
+                id="coach-photo-preview"
+                alt="Aperçu photo coach"
+                class="mt-3 rounded-full w-24 h-24 object-cover border-4 border-indigo-400 hidden"
+              />
+            </div>
+
+            <div class="flex items-end space-x-4 md:col-span-4 justify-center">
+              <button
+                type="submit"
+                class="bg-indigo-600 text-white px-8 py-3 rounded-xl shadow hover:bg-indigo-700 transition focus:outline-none focus:ring-4 focus:ring-indigo-400"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                id="coach-cancel-btn"
+                class="bg-gray-300 text-gray-800 px-8 py-3 rounded-xl shadow hover:bg-gray-400 transition focus:outline-none focus:ring-4 focus:ring-gray-400 hidden"
+              >
+                Annuler
+              </button>
+            </div>
+          </form>
+
+          <!-- Coach Table -->
+          <div
+            class="overflow-x-auto bg-white rounded-xl shadow max-w-7xl mx-auto mt-10"
+          >
+            <table class="w-full border-collapse text-gray-700">
+              <thead class="bg-indigo-100 text-indigo-900 font-semibold">
+                <tr>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Photo
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Nom
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Spécialité
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Planning
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-left">
+                    Années d’expérience
+                  </th>
+                  <th class="border border-indigo-300 px-5 py-3 text-center">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="coach-table-body"
+                class="divide-y divide-indigo-200 bg-indigo-50"
+              >
+                <!-- Coaches inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer
+        class="bg-indigo-700 shadow p-6 mt-12 text-center text-white text-sm select-none"
+      >
+        © 2025 Gestion de Gym
+      </footer>
+
+      <script>
+        // Tab navigation logic
+        const tabMembersBtn = document.getElementById("tab-members");
+        const tabCoachesBtn = document.getElementById("tab-coaches");
+        const membersSection = document.getElementById("members-section");
+        const coachesSection = document.getElementById("coaches-section");
+
+        function setActiveTab(tab) {
+          if (tab === "members") {
+            tabMembersBtn.classList.add("border-indigo-600", "text-indigo-600");
+            tabMembersBtn.classList.remove(
+              "border-transparent",
+              "text-gray-600",
+              "hover:text-indigo-700"
+            );
+            tabCoachesBtn.classList.remove(
+              "border-indigo-600",
+              "text-indigo-600"
+            );
+            tabCoachesBtn.classList.add(
+              "border-transparent",
+              "text-gray-600",
+              "hover:text-indigo-700"
+            );
+            membersSection.classList.remove("hidden");
+            coachesSection.classList.add("hidden");
+          } else {
+            tabCoachesBtn.classList.add("border-indigo-600", "text-indigo-600");
+            tabCoachesBtn.classList.remove(
+              "border-transparent",
+              "text-gray-600",
+              "hover:text-indigo-700"
+            );
+            tabMembersBtn.classList.remove(
+              "border-indigo-600",
+              "text-indigo-600"
+            );
+            tabMembersBtn.classList.add(
+              "border-transparent",
+              "text-gray-600",
+              "hover:text-indigo-700"
+            );
+            coachesSection.classList.remove("hidden");
+            membersSection.classList.add("hidden");
+          }
+          resetMemberForm();
+          resetCoachForm();
+        }
+
+        tabMembersBtn.addEventListener("click", () => setActiveTab("members"));
+        tabCoachesBtn.addEventListener("click", () => setActiveTab("coaches"));
+
+        // Storage keys
+        const STORAGE_KEYS = {
+          members: "gym_members",
+          coaches: "gym_coaches",
+        };
+
+        // Data and DOM elements
+        let members = [];
+        const memberForm = document.getElementById("member-form");
+        const memberTableBody = document.getElementById("member-table-body");
+        const memberCancelBtn = document.getElementById("member-cancel-btn");
+        const memberPhotoInput = document.getElementById("member-photo");
+        const memberPhotoPreview = document.getElementById(
+          "member-photo-preview"
+        );
+        let currentMemberPhotoBase64 = "";
+
+        let coaches = [];
+        const coachForm = document.getElementById("coach-form");
+        const coachTableBody = document.getElementById("coach-table-body");
+        const coachCancelBtn = document.getElementById("coach-cancel-btn");
+        const coachPhotoInput = document.getElementById("coach-photo");
+        const coachPhotoPreview = document.getElementById(
+          "coach-photo-preview"
+        );
+        let currentCoachPhotoBase64 = "";
+
+        // Unique ID generator
+        function generateId() {
+          return "_" + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Image handling helpers
+        function previewImage(input, previewImg, onBase64Ready) {
+          const file = input.files[0];
+          if (!file) {
+            previewImg.src = "";
+            previewImg.classList.add("hidden");
+            onBase64Ready("");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            previewImg.classList.remove("hidden");
+            onBase64Ready(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+
+        memberPhotoInput.addEventListener("change", () => {
+          previewImage(memberPhotoInput, memberPhotoPreview, (base64) => {
+            currentMemberPhotoBase64 = base64;
+          });
+        });
+
+        coachPhotoInput.addEventListener("change", () => {
+          previewImage(coachPhotoInput, coachPhotoPreview, (base64) => {
+            currentCoachPhotoBase64 = base64;
+          });
+        });
+
+        // Member Functions
+        function loadMembers() {
+          const stored = localStorage.getItem(STORAGE_KEYS.members);
+          members = stored ? JSON.parse(stored) : [];
+        }
+
+        function saveMembers() {
+          localStorage.setItem(STORAGE_KEYS.members, JSON.stringify(members));
+        }
+
+        function renderMembers() {
+          memberTableBody.innerHTML = "";
+          if (members.length === 0) {
+            const emptyRow = document.createElement("tr");
+            emptyRow.innerHTML = `
+          <td colspan="7" class="text-center py-6 text-indigo-400 font-semibold">Aucun abonné trouvé.</td>
+        `;
+            memberTableBody.appendChild(emptyRow);
+            return;
+          }
+          members.forEach((member) => {
+            const tr = document.createElement("tr");
+            tr.classList.add(
+              "hover:bg-indigo-100",
+              "transition-colors",
+              "cursor-default"
+            );
+            tr.innerHTML = `
+          <td class="border border-indigo-300 px-5 py-3 text-center">
+            ${
+              member.photo
+                ? `<img src="${member.photo}" alt="Photo de ${member.nom} ${member.prenom}" class="thumb-image mx-auto" />`
+                : "-"
+            }
+          </td>
+          <td class="border border-indigo-300 px-5 py-3">${member.nom}</td>
+          <td class="border border-indigo-300 px-5 py-3">${member.prenom}</td>
+          <td class="border border-indigo-300 px-5 py-3">${
+            member.dateInscription
+          }</td>
+          <td class="border border-indigo-300 px-5 py-3">${member.formule}</td>
+          <td class="border border-indigo-300 px-5 py-3 capitalize">${
+            member.statut
+          }</td>
+          <td class="border border-indigo-300 px-5 py-3 text-center space-x-4">
+            <button data-id="${
+              member.id
+            }" aria-label="Modifier" title="Modifier" class="text-indigo-600 hover:text-indigo-800 font-semibold member-edit-btn focus:outline-none">✏️</button>
+            <button data-id="${
+              member.id
+            }" aria-label="Supprimer" title="Supprimer" class="text-red-600 hover:text-red-800 font-semibold member-delete-btn focus:outline-none">🗑️</button>
+          </td>
+        `;
+            memberTableBody.appendChild(tr);
+          });
+          document.querySelectorAll(".member-edit-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              editMember(btn.getAttribute("data-id"));
+            });
+          });
+          document.querySelectorAll(".member-delete-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              deleteMember(btn.getAttribute("data-id"));
+            });
+          });
+        }
+
+        memberForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const id = document.getElementById("member-id").value;
+          const nom = document.getElementById("member-nom").value.trim();
+          const prenom = document.getElementById("member-prenom").value.trim();
+          const dateInscription = document.getElementById(
+            "member-date-inscription"
+          ).value;
+          const formule = document.getElementById("member-formule").value;
+          const statut = document.getElementById("member-statut").value;
+          const photo = currentMemberPhotoBase64 || "";
+
+          if (!nom || !prenom || !dateInscription || !formule || !statut)
+            return;
+
+          if (id) {
+            const index = members.findIndex((m) => m.id === id);
+            if (index !== -1) {
+              members[index] = {
+                id,
+                nom,
+                prenom,
+                dateInscription,
+                formule,
+                statut,
+                photo,
+              };
+            }
+          } else {
+            members.push({
+              id: generateId(),
+              nom,
+              prenom,
+              dateInscription,
+              formule,
+              statut,
+              photo,
+            });
+          }
+          saveMembers();
+          renderMembers();
+          resetMemberForm();
+        });
+
+        function editMember(id) {
+          const member = members.find((m) => m.id === id);
+          if (!member) return;
+          document.getElementById("member-id").value = member.id;
+          document.getElementById("member-nom").value = member.nom;
+          document.getElementById("member-prenom").value = member.prenom;
+          document.getElementById("member-date-inscription").value =
+            member.dateInscription;
+          document.getElementById("member-formule").value = member.formule;
+          document.getElementById("member-statut").value = member.statut;
+          if (member.photo) {
+            currentMemberPhotoBase64 = member.photo;
+            memberPhotoPreview.src = member.photo;
+            memberPhotoPreview.classList.remove("hidden");
+          } else {
+            currentMemberPhotoBase64 = "";
+            memberPhotoPreview.src = "";
+            memberPhotoPreview.classList.add("hidden");
+          }
+          memberPhotoInput.value = "";
+          memberCancelBtn.classList.remove("hidden");
+        }
+
+        function deleteMember(id) {
+          if (confirm("Voulez-vous vraiment supprimer cet abonné ?")) {
+            members = members.filter((m) => m.id !== id);
+            saveMembers();
+            renderMembers();
+            resetMemberForm();
+          }
+        }
+
+        function resetMemberForm() {
+          memberForm.reset();
+          document.getElementById("member-id").value = "";
+          currentMemberPhotoBase64 = "";
+          memberPhotoInput.value = "";
+          memberPhotoPreview.src = "";
+          memberPhotoPreview.classList.add("hidden");
+          memberCancelBtn.classList.add("hidden");
+        }
+
+        memberCancelBtn.addEventListener("click", resetMemberForm);
+
+        // Coach Functions
+        function loadCoaches() {
+          const stored = localStorage.getItem(STORAGE_KEYS.coaches);
+          coaches = stored ? JSON.parse(stored) : [];
+        }
+
+        function saveCoaches() {
+          localStorage.setItem(STORAGE_KEYS.coaches, JSON.stringify(coaches));
+        }
+
+        function renderCoaches() {
+          coachTableBody.innerHTML = "";
+          if (coaches.length === 0) {
+            const emptyRow = document.createElement("tr");
+            emptyRow.innerHTML = `
+          <td colspan="6" class="text-center py-6 text-indigo-400 font-semibold">Aucun coach trouvé.</td>
+        `;
+            coachTableBody.appendChild(emptyRow);
+            return;
+          }
+          coaches.forEach((coach) => {
+            const tr = document.createElement("tr");
+            tr.classList.add(
+              "hover:bg-indigo-100",
+              "transition-colors",
+              "cursor-default"
+            );
+            tr.innerHTML = `
+          <td class="border border-indigo-300 px-5 py-3 text-center">
+            ${
+              coach.photo
+                ? `<img src="${coach.photo}" alt="Photo de coach ${coach.nom}" class="thumb-image mx-auto" />`
+                : "-"
+            }
+          </td>
+          <td class="border border-indigo-300 px-5 py-3">${coach.nom}</td>
+          <td class="border border-indigo-300 px-5 py-3">${
+            coach.specialite
+          }</td>
+          <td class="border border-indigo-300 px-5 py-3">${coach.planning}</td>
+          <td class="border border-indigo-300 px-5 py-3">${
+            coach.anneesExperience
+          }</td>
+          <td class="border border-indigo-300 px-5 py-3 text-center space-x-4">
+            <button data-id="${
+              coach.id
+            }" aria-label="Modifier" title="Modifier" class="text-indigo-600 hover:text-indigo-800 font-semibold coach-edit-btn focus:outline-none">✏️</button>
+            <button data-id="${
+              coach.id
+            }" aria-label="Supprimer" title="Supprimer" class="text-red-600 hover:text-red-800 font-semibold coach-delete-btn focus:outline-none">🗑️</button>
+          </td>
+        `;
+            coachTableBody.appendChild(tr);
+          });
+          document.querySelectorAll(".coach-edit-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              editCoach(btn.getAttribute("data-id"));
+            });
+          });
+          document.querySelectorAll(".coach-delete-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              deleteCoach(btn.getAttribute("data-id"));
+            });
+          });
+        }
+
+        coachForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const id = document.getElementById("coach-id").value;
+          const nom = document.getElementById("coach-nom").value.trim();
+          const specialite = document
+            .getElementById("coach-specialite")
+            .value.trim();
+          const planning = document
+            .getElementById("coach-planning")
+            .value.trim();
+          const anneesExperience = document.getElementById(
+            "coach-annees-experience"
+          ).value;
+          const photo = currentCoachPhotoBase64 || "";
+
+          if (!nom || !specialite || !planning || anneesExperience === "")
+            return;
+
+          if (id) {
+            const index = coaches.findIndex((c) => c.id === id);
+            if (index !== -1) {
+              coaches[index] = {
+                id,
+                nom,
+                specialite,
+                planning,
+                anneesExperience: Number(anneesExperience),
+                photo,
+              };
+            }
+          } else {
+            coaches.push({
+              id: generateId(),
+              nom,
+              specialite,
+              planning,
+              anneesExperience: Number(anneesExperience),
+              photo,
+            });
+          }
+          saveCoaches();
+          renderCoaches();
+          resetCoachForm();
+        });
+
+        function editCoach(id) {
+          const coach = coaches.find((c) => c.id === id);
+          if (!coach) return;
+          document.getElementById("coach-id").value = coach.id;
+          document.getElementById("coach-nom").value = coach.nom;
+          document.getElementById("coach-specialite").value = coach.specialite;
+          document.getElementById("coach-planning").value = coach.planning;
+          document.getElementById("coach-annees-experience").value =
+            coach.anneesExperience;
+          if (coach.photo) {
+            currentCoachPhotoBase64 = coach.photo;
+            coachPhotoPreview.src = coach.photo;
+            coachPhotoPreview.classList.remove("hidden");
+          } else {
+            currentCoachPhotoBase64 = "";
+            coachPhotoPreview.src = "";
+            coachPhotoPreview.classList.add("hidden");
+          }
+          coachPhotoInput.value = "";
+          coachCancelBtn.classList.remove("hidden");
+        }
+
+        function deleteCoach(id) {
+          if (confirm("Voulez-vous vraiment supprimer ce coach ?")) {
+            coaches = coaches.filter((c) => c.id !== id);
+            saveCoaches();
+            renderCoaches();
+            resetCoachForm();
+          }
+        }
+
+        function resetCoachForm() {
+          coachForm.reset();
+          document.getElementById("coach-id").value = "";
+          currentCoachPhotoBase64 = "";
+          coachPhotoInput.value = "";
+          coachPhotoPreview.src = "";
+          coachPhotoPreview.classList.add("hidden");
+          coachCancelBtn.classList.add("hidden");
+        }
+
+        coachCancelBtn.addEventListener("click", resetCoachForm);
+
+        // Initialize
+        function init() {
+          loadMembers();
+          renderMembers();
+          loadCoaches();
+          renderCoaches();
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          init();
+        });
+      </script>
+    </body>
+  </html>
+
+  >
+
